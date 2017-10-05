@@ -2,7 +2,11 @@ function GetLatestApplicableVersion(
     $applicationConfigurationRootPath,
     $version) {
 
-    $matchExpression = '^(?<major>[0-9]+)(.(?<minor>[0-9]+)(.(?<patch>[0-9]+)(-(?<prerelease>.+))?)?)?$'
+    $matchExpression = '^(?<major>\d+)' `
+                + '(\.(?<minor>\d+))?' `
+                + '(\.(?<patch>\d+))?' `
+                + '(\-(?<pre>[0-9A-Za-z\-\.]+))?' `
+                + '(\+(?<build>[0-9A-Za-z\-\.]+))?$'
 
     if (-not ($version -match $matchExpression)) {
       throw "Invalid format for version $version"
@@ -14,6 +18,8 @@ function GetLatestApplicableVersion(
         Major = [int]$components.Major
         Minor = [int]$components.Minor
         Patch = [int]$components.Patch
+        Pre = [string]$components.Pre
+        Build = [string]$components.Build
     }
 
     $versionDirs = Get-ChildItem $applicationConfigurationRootPath -Directory | % {
